@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Guía Completa para EDA y Fraude Financiero</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<nav>
+  <strong>Índice</strong>
+  <a href="#bases">Bases y tareas para llegar a los productos</a>
+  <a href="#eda">Análisis Exploratorio de Datos (EDA)</a>
+  <a href="#pandas">¿Qué es pandas?</a>
+  <a href="#imbalanced">Clases Desbalanceadas</a>
+  <a href="#imbalancedlib">Librería imbalanced-learn</a>
+  <a href="#balanceo">Balanceo de Clases</a>
+  <a href="#analisis-dataset">Cómo analizar el dataset</a>
+  <a href="#ejemplo">Ejemplo Interactivo</a>
+  <a href="#producto-final">Productos finales esperados</a>
+</nav>
+
+<section id="curvas" class="decorative-section">
+  <svg class="curve-top" viewBox="0 0 1440 48" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,24 Q360,48 720,24 T1440,24 L1440,0 L0,0 Z" />
+  </svg>
+  <h1>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 20l-5.6-5.6a7 7 0 1 0-1.4 1.4L20 21zM4 10a6 6 0 1 1 6 6 6 6 0 0 1-6-6z" /></svg>
+    Guía de EDA y detección de fraude financiero
+  </h1>
+  <p>Una guía con bases sólidas, tareas y herramientas para lograr resultados profesionales.</p>
+  <svg class="curve-bottom" viewBox="0 0 1440 48" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,24 Q360,0 720,24 T1440,24 L1440,48 L0,48 Z" />
+  </svg>
+</section>
+
+<section id="bases">
+  <h2>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><rect x="7" y="7" width="10" height="10" fill="currentColor" opacity="0.5"/></svg>
+    Bases y tareas para llegar a un notebook, dataset limpio y visualizaciones
+  </h2>
+  <p>Para que los estudiantes logren el producto final, necesitan:</p>
+  <ul>
+    <li><strong>Conocimiento básico de Python y Jupyter Notebooks</strong>: instalación, ejecución de celdas, guardar y compartir notebooks.</li>
+    <li><strong>Aprender a usar pandas</strong>: carga de datos, inspección (<code>head()</code>, <code>info()</code>), limpieza (tratamiento de nulos y outliers), selección y filtrado.</li>
+    <li><strong>Comprender el concepto de clases desbalanceadas</strong> y su impacto en detección de fraude.</li>
+    <li><strong>Introducción a la librería imbalanced-learn</strong>: por qué y cómo usarla para balancear datos.</li>
+    <li><strong>Practicar visualizaciones básicas</strong> con matplotlib y seaborn para entender distribuciones y relaciones.</li>
+    <li><strong>Tareas sugeridas</strong> para que el estudiante pueda practicar antes y durante el proyecto:</li>
+  </ul>
+  <ol>
+    <li>Instalar Python, Jupyter y librerías (<code>pandas</code>, <code>matplotlib</code>, <code>seaborn</code>, <code>imbalanced-learn</code>).</li>
+    <li>Ejecutar un notebook con dataset público de fraude y explorar columnas.</li>
+    <li>Identificar y tratar datos faltantes y outliers.</li>
+    <li>Aplicar técnicas de oversampling usando imbalanced-learn para balancear clases.</li>
+    <li>Crear histogramas y boxplots para análisis visual.</li>
+    <li>Preparar reporte corto con insights.</li>
+  </ol>
+  <p><em>Con esta base, estarán listos para crear un notebook interactivo, limpiar el dataset y generar visualizaciones explicativas.</em></p>
+</section>
+
+<section id="eda">
+  <h2>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="11" width="18" height="7" rx="2" fill="currentColor"/><circle cx="8" cy="14.5" r="1.5" fill="#fff"/><circle cx="16" cy="14.5" r="1.5" fill="#fff"/></svg>
+    ¿Qué es el Análisis Exploratorio de Datos (EDA)?
+  </h2>
+  <p>El <strong>EDA</strong> es la primera etapa para entender cualquier conjunto de datos. Imagina que tienes un enorme libro lleno de registros, y antes de hacer cualquier modelo o predicción, quieres <em>explorar</em> ese libro: saber qué columnas tiene, qué tipo de información hay, si hay datos faltantes, valores extraños o patrones visibles.</p>
+  <ul>
+    <li><strong>Filas</strong>: cada fila es un registro (ejemplo o transacción).</li>
+    <li><strong>Columnas</strong>: cada columna es una variable (monto, fecha, tipo de transacción, si es fraude o no...)</li>
+  </ul>
+  <p>El EDA te ayuda a responder preguntas como:</p>
+  <ul>
+    <li>¿Cuántos registros tenemos?</li>
+    <li>¿Qué tipo de datos tiene cada columna (números, texto)?</li>
+    <li>¿Existen valores faltantes o muy raros?</li>
+    <li>¿Cómo se distribuyen las variables numéricas?</li>
+    <li>¿Existen relaciones entre variables?</li>
+  </ul>
+  <p>Estas respuestas permiten limpiar y preparar el dataset para modelos de detección de fraude.</p>
+</section>
+
+<section id="pandas">
+  <h2>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="16" rx="3" fill="currentColor"/><rect x="7" y="7" width="3" height="3" fill="#fff"/><rect x="14" y="7" width="3" height="3" fill="#fff"/><rect x="7" y="14" width="3" height="3" fill="#fff"/><rect x="14" y="14" width="3" height="3" fill="#fff"/></svg>
+    ¿Qué es pandas y por qué usarlo?
+  </h2>
+  <p><strong>pandas</strong> es una librería de Python diseñada para trabajar con datos tabulares. Si alguna vez usaste Excel, pandas es algo similar pero mucho más poderoso y automático, perfecto para grandes volúmenes y análisis avanzados.</p>
+  <p>Con pandas podemos:</p>
+  <ul>
+    <li>Leer datos de archivos CSV, Excel o bases de datos.</li>
+    <li>Visualizar las primeras filas para entender qué hay.</li>
+    <li>Filtrar filas y columnas según condiciones.</li>
+    <li>Limpiar datos faltantes o erróneos.</li>
+    <li>Calcular estadísticas básicas como medias, desviaciones, etc.</li>
+  </ul>
+  <p>Ejemplo sencillo en Python con pandas:</p>
+  <pre><code>import pandas as pd
+
+df = pd.read_csv("datos.csv")
+print(df.head())
+print(df.describe())</code></pre>
+</section>
+
+<section id="imbalanced">
+  <h2>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="10" width="18" height="4" rx="2" fill="currentColor"/><rect x="3" y="16" width="8" height="4" rx="2" fill="#fff"/></svg>
+    ¿Qué son las clases desbalanceadas y por qué importan en fraude?
+  </h2>
+  <p>En detección de fraude, la gran mayoría de transacciones son <em>legítimas</em> y solo una pequeña fracción son <em>fraudulentas</em>. Por ejemplo, 99% legítimas y 1% fraude. Esto crea un <strong>desequilibrio de clases</strong>.</p>
+  <p>Este desequilibrio es un problema porque:</p>
+  <ul>
+    <li>Un modelo que predice siempre "no fraude" tendrá alta exactitud, pero será inútil para detectar fraudes.</li>
+    <li>Los algoritmos aprenden mejor cuando hay ejemplos equilibrados de cada clase.</li>
+  </ul>
+  <p>Por eso usamos técnicas para <strong>balancear</strong> los datos.</p>
+</section>
+
+<section id="imbalancedlib">
+  <h2>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="16" rx="4" fill="currentColor"/><path d="M8 8h8v8H8z" fill="#fff"/></svg>
+    Librería <code>imbalanced-learn</code> para balancear clases
+  </h2>
+  <p>En Python, la librería <code>imbalanced-learn</code> ofrece métodos fáciles para balancear clases, como:</p>
+  <ul>
+    <li><strong>RandomOverSampler</strong>: duplica ejemplos de la clase minoritaria.</li>
+    <li><strong>SMOTE</strong>: crea ejemplos sintéticos basados en vecinos cercanos.</li>
+  </ul>
+  <p>Ejemplo de código:</p>
+  <pre><code>from imblearn.over_sampling import RandomOverSampler
+
+sampler = RandomOverSampler(random_state=42)
+X_resampled, y_resampled = sampler.fit_resample(X, y)</code></pre>
+  <p>Documentación completa: <a href="https://imbalanced-learn.org/stable/introduction.html" target="_blank" rel="noopener">imbalanced-learn</a></p>
+</section>
+
+<section id="balanceo">
+  <h2>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2" y="11" width="20" height="2" fill="currentColor"/><rect x="6" y="7" width="2" height="10" fill="currentColor"/><rect x="16" y="7" width="2" height="10" fill="currentColor"/></svg>
+    Técnicas para balancear clases
+  </h2>
+  <p>Las técnicas más comunes para balancear clases son:</p>
+  <ul>
+    <li><strong>Oversampling</strong>: crear o copiar más ejemplos de la clase minoritaria (fraude).</li>
+    <li><strong>Undersampling</strong>: reducir la cantidad de ejemplos de la clase mayoritaria (legítimos).</li>
+    <li><strong>SMOTE</strong>: método que crea ejemplos nuevos sintéticos para la clase minoritaria usando vecinos similares.</li>
+  </ul>
+</section>
+
+<section id="analisis-dataset">
+  <h2>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="4" fill="currentColor"/><path d="M7 7h10v2H7zM7 11h10v2H7zM7 15h6v2H7z" fill="#fff"/></svg>
+    Cómo analizar el dataset
+  </h2>
+  <p>Para analizar un dataset de fraude financiero, sigue estos pasos:</p>
+  <ol>
+    <li><strong>Revisión inicial:</strong> inspecciona las primeras filas, tipos de datos, valores faltantes con pandas (<code>head()</code>, <code>info()</code>, <code>isnull().sum()</code>).</li>
+    <li><strong>Estadísticas descriptivas:</strong> usa <code>describe()</code> para ver medias, desviaciones y detectar valores extremos.</li>
+    <li><strong>Detección de valores faltantes y outliers:</strong> decide si imputar, eliminar o marcar para revisión.</li>
+    <li><strong>Visualizaciones:</strong> histogramas para distribuciones, boxplots para outliers, heatmaps para correlaciones.</li>
+    <li><strong>Balanceo de clases:</strong> aplicar oversampling o SMOTE si la clase fraudulenta es minoritaria.</li>
+    <li><strong>Documentación:</strong> mantener notas claras y explicar cada paso para replicabilidad.</li>
+  </ol>
+</section>
+
+<section id="ejemplo">
+  <h2>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="currentColor"/><rect x="8" y="8" width="8" height="8" fill="#fff"/></svg>
+    Ejemplo interactivo con dataset público de fraude
+  </h2>
+  <p>Sube el dataset CSV de fraude (puedes descargarlo de Kaggle) y explora las primeras filas y distribución de clases.</p>
+
+  <div class="file-upload-wrapper">
+    <input type="file" id="csvFileInput" accept=".csv" style="display:none;" />
+    <button type="button" id="customFileBtn">Seleccionar archivo CSV</button>
+    <span id="fileName">Ningún archivo seleccionado</span>
+    <button id="btnLoadCSV">Cargar archivo CSV</button>
+    <div class="progress-container" style="display: none;">
+      <div class="progress-bar"></div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="classDistChart"></canvas>
+  </div>
+
+  <div class="table-wrapper" id="dataPreview"></div>
+
+  <p><small>Descarga el dataset de Kaggle <a href="https://www.kaggle.com/mlg-ulb/creditcardfraud" target="_blank" rel="noopener">aquí</a>.</small></p>
+</section>
+
+<section id="producto-final">
+  <h2>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M8 12l2 2 4-4" stroke="#fff" stroke-width="2" fill="none"/></svg>
+    Producto final esperado tras la sesión
+  </h2>
+  <p>Al finalizar, deberás tener:</p>
+  <ul>
+    <li><strong>Un notebook interactivo (Jupyter o Colab)</strong> con código limpio, comentado y organizado.</li>
+    <li><strong>Un dataset limpio y anotado</strong> con valores faltantes tratados y outliers marcados o corregidos.</li>
+    <li><strong>Visualizaciones básicas</strong> (histogramas, boxplots, correlaciones) para entender las variables y relaciones.</li>
+  </ul>
+  <p>Estos entregables permiten avanzar con seguridad hacia modelos de detección de fraude efectivos.</p>
+</section>
+<section id="tutorial-entregable">
+    <h2>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path fill="currentColor" d="M12 2L2 7v13h20V7zM12 12l-5-3v6zm7 4H5v-2h14z"/>
+      </svg>
+      Tutorial paso a paso para obtener el producto final entregable
+    </h2>
+    <p>Este tutorial te guiará para crear un notebook interactivo donde realices un análisis exploratorio de datos (EDA) sobre un dataset público de fraude financiero, limpiar y anotar el dataset, y generar visualizaciones claras que expliquen tus hallazgos.</p>
+    
+    <ol>
+      <li><strong>Instalar el entorno de trabajo</strong>
+        <ul>
+          <li>Descarga e instala <a href="https://www.anaconda.com/products/distribution" target="_blank" rel="noopener">Anaconda</a>, que incluye Python y Jupyter Notebook.</li>
+          <li>Alternativamente, puedes usar <a href="https://colab.research.google.com" target="_blank" rel="noopener">Google Colab</a>, una plataforma gratuita en la nube sin instalaciones.</li>
+        </ul>
+      </li>
+      
+      <li><strong>Crear y preparar el notebook</strong>
+        <ul>
+          <li>Abre Jupyter Notebook o Google Colab y crea un nuevo notebook.</li>
+          <li>Instala las librerías necesarias ejecutando en una celda:
+            <pre><code>!pip install pandas matplotlib seaborn imbalanced-learn</code></pre>
+          </li>
+          <li>Importa las librerías básicas:
+            <pre><code>import pandas as pd
+  import matplotlib.pyplot as plt
+  import seaborn as sns
+  from imblearn.over_sampling import RandomOverSampler</code></pre>
+          </li>
+        </ul>
+      </li>
+      
+      <li><strong>Cargar el dataset</strong>
+        <ul>
+          <li>Descarga el dataset público de fraude desde <a href="https://www.kaggle.com/mlg-ulb/creditcardfraud" target="_blank" rel="noopener">Kaggle</a>.</li>
+          <li>Sube el archivo CSV a tu entorno y cárgalo en pandas:
+            <pre><code>df = pd.read_csv("creditcard.csv")</code></pre>
+          </li>
+          <li>Explora las primeras filas para entender la estructura:
+            <pre><code>df.head()</code></pre>
+          </li>
+        </ul>
+      </li>
+      
+      <li><strong>Exploración inicial</strong>
+        <ul>
+          <li>Revisa tipos y valores faltantes:
+            <pre><code>df.info()
+  df.isnull().sum()</code></pre>
+          </li>
+          <li>Obtén estadísticas descriptivas:
+            <pre><code>df.describe()</code></pre>
+          </li>
+          <li>Observa la distribución de la variable objetivo ('Class'):
+            <pre><code>df['Class'].value_counts()</code></pre>
+          </li>
+        </ul>
+      </li>
+      
+      <li><strong>Limpieza y anotación</strong>
+        <ul>
+          <li>Trata los valores faltantes (si hay):
+            <pre><code># Ejemplo: imputar con mediana
+  df.fillna(df.median(), inplace=True)</code></pre>
+          </li>
+          <li>Detecta outliers con boxplots y rango intercuartílico (IQR):
+            <pre><code>Q1 = df.quantile(0.25)
+  Q3 = df.quantile(0.75)
+  IQR = Q3 - Q1
+  outliers = ((df < (Q1 - 1.5 * IQR)) | (df > (Q3 + 1.5 * IQR))).sum()</code></pre>
+          </li>
+          <li>Marca o elimina outliers según criterio.</li>
+          <li>Añade anotaciones si es necesario con una nueva columna explicativa.</li>
+        </ul>
+      </li>
+      
+      <li><strong>Balancear las clases</strong>
+        <ul>
+          <li>Separa características y etiquetas:
+            <pre><code>X = df.drop('Class', axis=1)
+  y = df['Class']</code></pre>
+          </li>
+          <li>Aplica oversampling para balancear:
+            <pre><code>ros = RandomOverSampler(random_state=42)
+  X_res, y_res = ros.fit_resample(X, y)</code></pre>
+          </li>
+        </ul>
+      </li>
+      
+      <li><strong>Visualizaciones básicas</strong>
+        <ul>
+          <li>Histograma de montos o variables clave:
+            <pre><code>sns.histplot(df['Amount'], bins=50)
+  plt.show()</code></pre>
+          </li>
+          <li>Boxplot para detectar outliers:
+            <pre><code>sns.boxplot(x='Class', y='Amount', data=df)
+  plt.show()</code></pre>
+          </li>
+          <li>Matriz de correlación:
+            <pre><code>corr = df.corr()
+  sns.heatmap(corr, cmap='coolwarm', annot=False)
+  plt.show()</code></pre>
+          </li>
+        </ul>
+      </li>
+      
+      <li><strong>Documentar el análisis</strong>
+        <ul>
+          <li>Comenta cada bloque de código en el notebook explicando qué haces y por qué.</li>
+          <li>Resume hallazgos clave en celdas de texto para que sea claro y replicable.</li>
+        </ul>
+      </li>
+      
+      <li><strong>Guardar y compartir</strong>
+        <ul>
+          <li>Guarda el notebook con un nombre descriptivo, por ejemplo, <code>eda_fraude_creditcard.ipynb</code>.</li>
+          <li>Incluye el dataset limpio y anotado junto con el notebook para entregar.</li>
+          <li>Prepara un README breve con el resumen de tu trabajo y próximos pasos.</li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+
+<!-- Incluir PapaParse desde CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<!-- Incluir tu archivo de script -->
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+/* Importar fuente Inter desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  margin: 2em 1.5em;
+  background: #111;
+  color: #121212;
+  line-height: 1.65;
+  font-weight: 300;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  color: #0d0d0d;
+  margin-bottom: 0.6em;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+h1 svg, h2 svg, h3 svg {
+  width: 28px;
+  height: 28px;
+  fill: #000;
+  margin-right: 0.75em;
+  flex-shrink: 0;
+}
+
+p, ul, table {
+  font-weight: 400;
+  color: #2e2e2e;
+}
+
+ul {
+  padding-left: 1.4em;
+  margin-bottom: 1.5em;
+}
+
+pre {
+  background: #f7f9fc;
+  padding: 1.1em 1.4em;
+  border-radius: 12px;
+  font-family: 'Fira Mono', monospace, monospace;
+  font-size: 0.95em;
+  overflow-x: auto;
+  color: #242424;
+  box-shadow: inset 0 0 8px rgb(0 0 0 / 0.03);
+  margin-bottom: 1.5em;
+}
+
+code {
+  background: #e9eff5;
+  padding: 0.2em 0.45em;
+  border-radius: 5px;
+  font-family: 'Fira Mono', monospace, monospace;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+section {
+  max-width: 720px;
+  margin: 3em auto;
+  background: #fff;
+  padding: 2.4em 3em;
+  border-radius: 20px;
+  border: 1px solid #d6d6d6;
+  /* Sombra minimalista y elegante */
+  box-shadow:
+    0 2px 5px rgb(0 0 0 / 0.04),
+    0 1px 1.5px rgb(0 0 0 / 0.02);
+  color: #121212;
+}
+
+/* Líneas divisorias sutiles */
+section p, section ul {
+  border-bottom: 1px solid #111;
+  border-bottom-opacity: 0.07;
+  padding-bottom: 0.9em;
+  margin-bottom: 1.5em;
+}
+section p:last-child, section ul:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* Menú lateral */
+nav {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  background: #fff;
+  color: #121212;
+  padding: 1.3em 2em 1.3em 2.5em;
+  border-radius: 24px;
+  max-width: 260px;
+  font-weight: 400;
+  font-size: 0.9em;
+  border-left: 5px solid #000;
+  box-shadow:
+    0 10px 20px rgb(0 0 0 / 0.07),
+    0 4px 8px rgb(0 0 0 / 0.04);
+  user-select: none;
+  z-index: 1000;
+}
+
+nav strong {
+  display: block;
+  margin-bottom: 1.1em;
+  font-weight: 700;
+  font-size: 1.15em;
+  letter-spacing: 0.03em;
+}
+
+nav a {
+  color: #121212;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.9em;
+  padding-bottom: 0.4em;
+  border-bottom: 1px solid #111;
+  border-bottom-opacity: 0.08;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+nav a:last-child {
+  border-bottom: none;
+}
+
+nav a:hover {
+  color: #444;
+  text-decoration: underline;
+}
+
+/* Tabla elegante */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-weight: 400;
+  margin-top: 1em;
+}
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 14px 18px;
+  text-align: left;
+}
+table thead th {
+  background: #000;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* Botones oscuros y elegantes */
+button {
+  cursor: pointer;
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 0.95em 2.2em;
+  font-weight: 700;
+  font-size: 1.08em;
+  border-radius: 999px;
+  margin-top: 1.5em;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10), 0 1.5px 4px rgba(0,0,0,0.08);
+  transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s;
+  letter-spacing: 0.01em;
+}
+button:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
+  background: #222;
+}
+
+/* Inputs de archivos */
+input[type="file"] {
+  margin-top: 1.2em;
+  font-weight: 400;
+  font-size: 1em;
+  color: #222;
+}
+
+/* Responsive */
+@media(max-width: 840px) {
+  nav {
+    position: static;
+    max-width: none;
+    margin-bottom: 2.5em;
+    border-radius: 16px;
+    box-shadow: none;
+    padding: 1.3em 1.8em;
+    text-align: center;
+    border-left: 4px solid #222;
+  }
+  section {
+    margin: 2em 1em;
+    padding: 2em 2em;
+  }
+}
+/* Contenedor scroll horizontal para tablas grandes */
+.table-wrapper {
+    overflow-x: auto;
+    margin-top: 1em;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow:
+      0 3px 6px rgb(0 0 0 / 0.07);
+  }
+  
+  
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 700px; 
+    width: 100%;
+  }
+  
+  thead th {
+    position: sticky;
+    top: 0;
+    background: #000;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 14px 18px;
+    z-index: 2;
+    border-bottom: 2px solid #444;
+  }
+  
+  tbody td {
+    padding: 12px 18px;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap; 
+    font-weight: 400;
+    color: #222;
+  }
+  
+
+  @media(max-width: 840px) {
+    .table-wrapper {
+      border: none;
+      box-shadow: none;
+    }
+    table {
+      min-width: 600px;
+    }
+  }
+  
+.decorative-section {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 0.04), 0 1px 1.5px rgb(0 0 0 / 0.02);
+  max-width: 720px;
+  margin: 3em auto;
+  padding: 2.4em 3em 1.2em 3em;
+  position: relative;
+  overflow: hidden;
+}
+
+.curve-top, .curve-bottom {
+  display: block;
+  width: 100%;
+  height: 48px;
+  position: absolute;
+  left: 0;
+}
+.curve-top {
+  top: 0;
+}
+.curve-bottom {
+  bottom: 0;
+}
+
+.curve-top path, .curve-bottom path {
+  fill: #f7f9fc;
+}
+
+.decorative-section h1, .decorative-section p {
+  position: relative;
+  z-index: 1;
+}
+
+@media(max-width: 840px) {
+  .decorative-section {
+    margin: 2em 1em;
+    padding: 2em 1.2em 1em 1.2em;
+  }
+}
+
+.file-upload-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  margin: 2em 0 1.5em 0;
+  flex-wrap: wrap;
+}
+#customFileBtn {
+  min-width: 200px;
+  margin: 0;
+}
+#btnLoadCSV {
+  min-width: 200px;
+  margin: 0;
+}
+#fileName {
+  font-size: 1em;
+  color: #444;
+  min-width: 160px;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+  display: inline-block;
+  text-align: left;
+}
+@media (max-width: 600px) {
+  .file-upload-wrapper {
+    flex-direction: column;
+    gap: 0.7em;
+  }
+  #customFileBtn, #btnLoadCSV {
+    min-width: 140px;
+    width: 100%;
+  }
+  #fileName {
+    max-width: 100%;
+    text-align: center;
+  }
+}
+
+.progress-container {
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 1em;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background-color: #007cf0;
+  border-radius: 4px;
+  transition: width 0.2s ease-in-out;
+}
+  
