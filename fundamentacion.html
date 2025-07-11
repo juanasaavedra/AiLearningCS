@@ -294,34 +294,7 @@
   </section>
 
   <!-- Tareas complementarias -->
-  <section class="card" style="margin-top:2.5em;">
-    <h2>Tareas complementarias</h2>
-    <div class="card step-card">
-      <h3>A. Análisis de distribución de clases</h3>
-      <p>Se observó una desproporción considerable entre las clases de la variable objetivo <b>IsFraud</b>, lo cual indica un problema de desbalance de clases. Este desequilibrio tiene implicaciones críticas en la fase de modelado, ya que puede conducir a una alta tasa de falsos negativos si no se corrige mediante técnicas específicas (SMOTE, reponderación de clases, penalización por costo, etc.).</p>
-      <div class="why-block"><span class="why-label">¿Por qué?</span>
-        <svg class="why-bulb" viewBox="0 0 32 32"><ellipse cx="16" cy="14" rx="10" ry="10" fill="#ffe066" stroke="#bfa800" stroke-width="2"/><rect x="13" y="22" width="6" height="6" rx="2" fill="#bfa800"/><rect x="14.5" y="28" width="3" height="2" rx="1" fill="#ffe066"/></svg>
-        <span class="why-explanation">El desbalance de clases puede hacer que el modelo ignore la clase minoritaria (fraude), por lo que es fundamental detectarlo y corregirlo.</span>
-      </div>
-    </div>
-    <div class="card step-card">
-      <h3>B. Inspección de valores atípicos</h3>
-      <p>La variable <b>Amount</b>, a pesar de haber sido normalizada, presenta una distribución que puede ser visualizada mediante un boxplot. Esta representación evidencia la presencia de observaciones extremas. Si bien estas observaciones no deben ser eliminadas sin una justificación, su análisis es fundamental para asegurar la estabilidad del modelo frente a ruido o fraude intencionalmente atípico.</p>
-      <div class="why-block"><span class="why-label">¿Por qué?</span>
-        <svg class="why-bulb" viewBox="0 0 32 32"><ellipse cx="16" cy="14" rx="10" ry="10" fill="#ffe066" stroke="#bfa800" stroke-width="2"/><rect x="13" y="22" width="6" height="6" rx="2" fill="#bfa800"/><rect x="14.5" y="28" width="3" height="2" rx="1" fill="#ffe066"/></svg>
-        <span class="why-explanation">Los valores atípicos pueden afectar la robustez del modelo y, en el caso de fraude, pueden ser precisamente los casos más interesantes de analizar.</span>
-      </div>
-    </div>
-    <div class="card step-card">
-      <h3>C. Segmento representativo del dataset</h3>
-      <p>Se presenta una muestra aleatoria del dataset procesado, la cual permite verificar visualmente la integridad y formato de las variables codificadas, derivadas y normalizadas.</p>
-      <div class="table-scroll" id="complementary-sample"></div>
-      <div class="why-block"><span class="why-label">¿Por qué?</span>
-        <svg class="why-bulb" viewBox="0 0 32 32"><ellipse cx="16" cy="14" rx="10" ry="10" fill="#ffe066" stroke="#bfa800" stroke-width="2"/><rect x="13" y="22" width="6" height="6" rx="2" fill="#bfa800"/><rect x="14.5" y="28" width="3" height="2" rx="1" fill="#ffe066"/></svg>
-        <span class="why-explanation">Una muestra aleatoria permite comprobar que el preprocesamiento se realizó correctamente y que los datos están listos para modelado.</span>
-      </div>
-    </div>
-  </section>
+ 
 
 <script defer>
 // Mostrar muestra aleatoria en tareas complementarias
