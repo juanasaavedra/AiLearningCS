@@ -66,25 +66,68 @@ function countClasses(data) {
 function drawChart() {
   const ctx = document.getElementById('classDistChart').getContext('2d');
   if (window.myChart) window.myChart.destroy();
-
+  let allLabels = ['0', '1'];
+  let displayLabels = allLabels.map(l => l === '0' ? 'No Fraude' : 'Fraude');
+  let dataValues = allLabels.map(l => classCounts[l] || 0);
   window.myChart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: labels,
+      labels: displayLabels,
       datasets: [{
         label: 'Número de transacciones',
-        data: labels.map(l => classCounts[l]),
-        backgroundColor: ['#222', '#999']
+        data: dataValues,
+        backgroundColor: ['#F9F871', '#F9D6F7'],
+        borderColor: ['#22223A', '#22223A'],
+        borderWidth: 2
       }]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        title: { display: true, text: 'Distribución de clases (fraude vs no fraude)' }
+        title: { display: true, text: 'Distribución de clases (fraude vs no fraude)', color: '#F9F871', font: { size: 22, weight: 'bold' } }
       },
       scales: {
-        y: { beginAtZero: true }
+        y: { beginAtZero: true, ticks: { color: '#fff', font: { size: 16 } }, grid: { color: '#444' } },
+        x: { ticks: { color: '#fff', font: { size: 18, weight: 'bold' } }, grid: { color: '#444' } }
+      }
+    }
+  });
+}
+
+function drawAmountBoxplotByClass(data) {
+  const ctx = document.getElementById('amountBoxplot').getContext('2d');
+  if (window.amountBoxplot) window.amountBoxplot.destroy();
+  const amountsNoFraud = data.filter(row => row.IsFraud == 0).map(row => row.Amount).filter(x => typeof x === 'number' && !isNaN(x));
+  const amountsFraud = data.filter(row => row.IsFraud == 1).map(row => row.Amount).filter(x => typeof x === 'number' && !isNaN(x));
+  if (amountsNoFraud.length === 0 && amountsFraud.length === 0) {
+    document.getElementById('amountBoxplot').insertAdjacentHTML('afterend', '<div style="color:#F9D6F7;text-align:center;font-size:1.2em;margin-top:1em;">No hay datos suficientes para mostrar el boxplot.</div>');
+    return;
+  }
+  window.amountBoxplot = new Chart(ctx, {
+    type: 'boxplot',
+    data: {
+      labels: ['No Fraude', 'Fraude'],
+      datasets: [{
+        label: 'Amount',
+        data: [amountsNoFraud, amountsFraud],
+        backgroundColor: ['#F9F871', '#F9D6F7'],
+        borderColor: ['#22223A', '#22223A'],
+        borderWidth: 2,
+        outlierColor: '#F9D6F7'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Boxplot de Amount por Clase', color: '#F9D6F7', font: { size: 22, weight: 'bold' } }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { color: '#fff', font: { size: 16 } }, grid: { color: '#444' } },
+        x: { ticks: { color: '#fff', font: { size: 18, weight: 'bold' } }, grid: { color: '#444' } }
       }
     }
   });

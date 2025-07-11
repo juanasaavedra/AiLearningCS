@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fundamentación y Procedimiento Técnico</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot@4.3.0/dist/chartjs-chart-box-and-violin-plot.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="script.js" defer></script>
+  <style>
+    .accordion {background:#22223A;border-radius:18px;margin:2em auto 2em auto;max-width:900px;box-shadow:0 2px 12px rgba(24,26,42,0.12);}
+    .accordion-header {cursor:pointer;padding:1.2em 2em;font-size:1.15em;font-weight:700;color:#F9F871;display:flex;align-items:center;justify-content:space-between;}
+    .accordion-content {display:none;padding:1.2em 2em 2em 2em;}
+    .accordion.open .accordion-content {display:block;}
+    .accordion-header svg {transition:transform 0.2s;}
+    .accordion.open .accordion-header svg {transform:rotate(90deg);}
+    .step-card table, #dataset-original table {background:#181A2A;color:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(24,26,42,0.10);}
+    .step-card th, .step-card td, #dataset-original th, #dataset-original td {padding:6px 12px;}
+    .step-card th, #dataset-original th {background:#2e2e4d;color:#F9F871;}
+    .step-card td, #dataset-original td {border-bottom:1px solid #333;}
+    .why-block {
+      background-color: #181A2A;
+      border-radius: 8px;
+      padding: 1em;
+      margin-top: 1em;
+      display: flex;
+      align-items: center;
+      gap: 1em;
+      border: 1px solid #333;
+    }
+    .why-label {
+      font-weight: bold;
+      color: #F9F871;
+      font-size: 1.1em;
+    }
+    .why-bulb {
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      fill: #F9F871;
+      stroke: #F9F871;
+      stroke-width: 2;
+    }
+    .why-bulb.on {
+      fill: #F9D6F7;
+      stroke: #F9D6F7;
+    }
+    .why-explanation {
+      font-size: 0.9em;
+      color: #fff;
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+    .table-scroll {
+      overflow-x: auto;
+      max-width: 100%;
+    }
+    .chart-container {
+      min-width: 320px;
+      max-width: 420px;
+      min-height: 320px;
+      background: #181A2A;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1em;
+    }
+    .chart-fullwidth {
+      width: 100%;
+      max-width: 100%;
+      min-height: 320px;
+      background: #181A2A;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1em;
+    }
+  </style>
+  <script defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Accordion logic
+      document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', function() {
+          this.parentElement.classList.toggle('open');
+        });
+      });
+      // Bombilla ¿Por qué?
+      document.querySelectorAll('.why-bulb').forEach(bulb => {
+        bulb.addEventListener('click', function() {
+          const block = this.closest('.why-block');
+          block.classList.toggle('active');
+          this.classList.toggle('on');
+        });
+      });
+      // CSV logic
+      Papa.parse('src/credit_card_fraud_dataset.csv', {
+        download: true,
+        header: true,
+        dynamicTyping: true,
+        complete: function(results) {
+          rawData = results.data;
+          // Mostrar dataset original en accordion
+          showStepPreview('dataset-original-content', rawData, Object.keys(rawData[0]));
+          // Paso 1: Conversión temporal
+          const paso1 = rawData.map(row => ({
+            ...row,
+            Hour: row.TransactionDate ? new Date(row.TransactionDate).getHours() : undefined,
+            Weekday: row.TransactionDate ? new Date(row.TransactionDate).getDay() : undefined,
+            Month: row.TransactionDate ? new Date(row.TransactionDate).getMonth() + 1 : undefined
+          }));
+          showStepPreview('paso1-preview', paso1, ['TransactionID','TransactionDate','Hour','Weekday','Month','Amount','MerchantID','TransactionType','Location','IsFraud']);
+
+          // Paso 2: Codificación categórica
+          const paso2 = paso1.map(row => ({
+            ...row,
+            TransactionType: row.TransactionType === 'purchase' ? 0 : 1,
+            // One-hot para Location (ejemplo para Dallas y Houston)
+            Location_Dallas: row.Location === 'Dallas' ? 1 : 0,
+            Location_Houston: row.Location === 'Houston' ? 1 : 0
+          }));
+          showStepPreview('paso2-preview', paso2, ['Hour','Weekday','Month','Amount','MerchantID','TransactionType','Location_Dallas','Location_Houston','IsFraud']);
+
+          // Paso 3: Normalización de Amount
+          const amounts = paso2.map(r => r.Amount).filter(x => typeof x === 'number' && !isNaN(x));
+          const minA = Math.min(...amounts);
+          const maxA = Math.max(...amounts);
+          const paso3 = paso2.map(row => ({
+            ...row,
+            Amount: (typeof row.Amount === 'number' && !isNaN(row.Amount)) ? ((row.Amount - minA) / (maxA - minA)) : row.Amount
+          }));
+          showStepPreview('paso3-preview', paso3, ['Hour','Weekday','Month','Amount','MerchantID','TransactionType','Location_Dallas','Location_Houston','IsFraud']);
+
+          // Paso 4: Eliminación de no predictivas
+          const paso4 = paso3.map(({TransactionID,TransactionDate,Location,...rest}) => rest);
+          showStepPreview('paso4-preview', paso4, ['Hour','Weekday','Month','Amount','MerchantID','TransactionType','Location_Dallas','Location_Houston','IsFraud']);
+
+          // Gráficas y tabla final
+          showPreview(paso4);
+          countClasses(paso4);
+          drawChart();
+          drawAmountBoxplotReal(paso4);
+        }
+      });
+    });
+    // Boxplot real con plugin Chart.js
+    function drawAmountBoxplotReal(data) {
+      const ctx = document.getElementById('amountBoxplot').getContext('2d');
+      const amounts = data.map(row => row.Amount).filter(x => typeof x === 'number' && !isNaN(x));
+      if(window.amountBox) window.amountBox.destroy();
+      window.amountBox = new Chart(ctx, {
+        type: 'boxplot',
+        data: {
+          labels: ['Amount'],
+          datasets: [{
+            label: 'Amount',
+            data: [amounts],
+            backgroundColor: '#F9D6F7',
+            borderColor: '#F9F871',
+            borderWidth: 2,
+            outlierColor: '#ff7675',
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Boxplot de Amount' }
+          },
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              grace: '10%',
+              ticks: { color: '#fff' },
+              grid: { color: '#444' }
+            },
+            x: {
+              ticks: { color: '#fff' },
+              grid: { color: '#444' }
+            }
+          }
+        }
+      });
+    }
+    // Mostrar tabla de preview para cada paso
+    function showStepPreview(containerId, data, columns) {
+      if (!data.length) return;
+      let html = '<div class="table-scroll"><table border="1" cellpadding="5" cellspacing="0">';
+      html += '<thead><tr>' + columns.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+      data.slice(0,5).forEach(row => {
+        html += '<tr>' + columns.map(c => `<td>${row[c] !== undefined ? row[c] : ''}</td>`).join('') + '</tr>';
+      });
+      html += '</tbody></table></div>';
+      document.getElementById(containerId).innerHTML = html;
+    }
+  </script>
+</head>
+<body>
+  <img src="src/CS HOR-OSCURO.png" alt="Logo Computer Society UN" class="header-logo" />
+  <nav class="tabs-nav">
+    <a href="index.html">Sesión 1: Landing</a>
+    <a href="fundamentacion.html" class="active">Sesión 2: Fundamentación y Procedimiento Técnico</a>
+  </nav>
+
+  <div class="accordion" id="dataset-original">
+    <div class="accordion-header">
+      <span>Ver dataset original (primeras filas)</span>
+      <svg width="18" height="18" viewBox="0 0 20 20"><polyline points="6 8 10 12 14 8" fill="none" stroke="#F9F871" stroke-width="2"/></svg>
+    </div>
+    <div class="accordion-content" id="dataset-original-content"></div>
+  </div>
+
+  <section class="card big-card" style="margin-bottom:2em;">
+    <h1>Fundamentación y procedimiento técnico</h1>
+    <p>El preprocesamiento de datos es esencial para transformar datos crudos en información útil para modelos predictivos. A continuación, se muestra el proceso aplicado paso a paso sobre el dataset de transacciones financieras.</p>
+  </section>
+
+  <!-- Stepper visual del proceso -->
+  <div style="max-width:950px;margin:0 auto;">
+    <!-- Paso 1 -->
+    <section class="card step-card">
+      <h2>Paso 1: Conversión temporal y extracción de atributos derivados</h2>
+      <ul>
+        <li>La variable <b>TransactionDate</b> se transformó a formato datetime.</li>
+        <li>Se extrajeron los atributos <b>Hour</b>, <b>Weekday</b> y <b>Month</b>.</li>
+        <li>La variable original fue descartada.</li>
+      </ul>
+      <div id="paso1-preview"></div>
+      <div class="why-block"><span class="why-label">¿Por qué?</span>
+        <svg class="why-bulb" viewBox="0 0 32 32"><ellipse cx="16" cy="14" rx="10" ry="10" fill="#ffe066" stroke="#bfa800" stroke-width="2"/><rect x="13" y="22" width="6" height="6" rx="2" fill="#bfa800"/><rect x="14.5" y="28" width="3" height="2" rx="1" fill="#ffe066"/></svg>
+        <span class="why-explanation">Extraer atributos temporales permite capturar patrones de fraude que dependen de la hora, el día o el mes. Por ejemplo, ciertos fraudes pueden ocurrir más en fines de semana o en horarios nocturnos.</span>
+      </div>
+    </section>
+    <!-- Paso 2 -->
+    <section class="card step-card">
+      <h2>Paso 2: Codificación de variables categóricas</h2>
+      <ul>
+        <li><b>TransactionType</b> (binaria) se codificó como 0 y 1.</li>
+        <li><b>Location</b> (nominal) se codificó con one-hot encoding.</li>
+      </ul>
+      <div id="paso2-preview"></div>
+      <div class="why-block"><span class="why-label">¿Por qué?</span>
+        <svg class="why-bulb" viewBox="0 0 32 32"><ellipse cx="16" cy="14" rx="10" ry="10" fill="#ffe066" stroke="#bfa800" stroke-width="2"/><rect x="13" y="22" width="6" height="6" rx="2" fill="#bfa800"/><rect x="14.5" y="28" width="3" height="2" rx="1" fill="#ffe066"/></svg>
+        <span class="why-explanation">Los algoritmos de machine learning requieren variables numéricas. La codificación permite que la información categórica sea utilizada por los modelos sin introducir sesgos.</span>
+      </div>
+    </section>
+    <!-- Paso 3 -->
+    <section class="card step-card">
+      <h2>Paso 3: Normalización de escalas</h2>
+      <ul>
+        <li>La variable <b>Amount</b> fue normalizada con Min-Max scaling al rango [0, 1].</li>
+      </ul>
+      <pre><code>x<sub>i</sub><sup>norm</sup> = (x<sub>i</sub> - min(x)) / (max(x) - min(x))</code></pre>
+      <div id="paso3-preview"></div>
+      <div class="why-block"><span class="why-label">¿Por qué?</span>
+        <svg class="why-bulb" viewBox="0 0 32 32"><ellipse cx="16" cy="14" rx="10" ry="10" fill="#ffe066" stroke="#bfa800" stroke-width="2"/><rect x="13" y="22" width="6" height="6" rx="2" fill="#bfa800"/><rect x="14.5" y="28" width="3" height="2" rx="1" fill="#ffe066"/></svg>
+        <span class="why-explanation">La normalización evita que variables con escalas grandes dominen el aprendizaje del modelo y mejora la convergencia de muchos algoritmos.</span>
+      </div>
+    </section>
+    <!-- Paso 4 -->
+    <section class="card step-card">
+      <h2>Paso 4: Eliminación de variables no predictivas</h2>
+      <ul>
+        <li><b>TransactionID</b> y <b>TransactionDate</b> fueron eliminadas.</li>
+      </ul>
+      <div id="paso4-preview"></div>
+      <div class="why-block"><span class="why-label">¿Por qué?</span>
+        <svg class="why-bulb" viewBox="0 0 32 32"><ellipse cx="16" cy="14" rx="10" ry="10" fill="#ffe066" stroke="#bfa800" stroke-width="2"/><rect x="13" y="22" width="6" height="6" rx="2" fill="#bfa800"/><rect x="14.5" y="28" width="3" height="2" rx="1" fill="#ffe066"/></svg>
+        <span class="why-explanation">Variables como identificadores o fechas originales no aportan valor predictivo y pueden introducir ruido o fugas de información en el modelo.</span>
+      </div>
+    </section>
+  </div>
+
+  <!-- Gráficas y tabla -->
+  <section class="chart-fullwidth">
+    <h2>Distribución de clases</h2>
+    <canvas id="classDistChart"></canvas>
+  </section>
+  <section class="chart-fullwidth">
+    <h2>Boxplot de Amount</h2>
+    <canvas id="amountBoxplot"></canvas>
+  </section>
+  <section class="card" style="margin-top:2.5em;">
+    <h2>Vista previa del dataset procesado</h2>
+    <div class="table-scroll" id="dataPreview"></div>
+  </section>
+
+  <!-- Tareas complementarias -->
+  <section class="card" style="margin-top:2.5em;">
+    <h2>Tareas complementarias</h2>
+    <div class="card step-card">
+      <h3>A. Análisis de distribución de clases</h3>
+      <p>Se observó una desproporción considerable entre las clases de la variable objetivo <b>IsFraud</b>, lo cual indica un problema de desbalance de clases. Este desequilibrio tiene implicaciones críticas en la fase de modelado, ya que puede conducir a una alta tasa de falsos negativos si no se corrige mediante técnicas específicas (SMOTE, reponderación de clases, penalización por costo, etc.).</p>
+      <div class="why-block"><span class="why-label">¿Por qué?</span>
+        <svg class="why-bulb" viewBox="0 0 32 32"><ellipse cx="16" cy="14" rx="10" ry="10" fill="#ffe066" stroke="#bfa800" stroke-width="2"/><rect x="13" y="22" width="6" height="6" rx="2" fill="#bfa800"/><rect x="14.5" y="28" width="3" height="2" rx="1" fill="#ffe066"/></svg>
+        <span class="why-explanation">El desbalance de clases puede hacer que el modelo ignore la clase minoritaria (fraude), por lo que es fundamental detectarlo y corregirlo.</span>
+      </div>
+    </div>
+    <div class="card step-card">
+      <h3>B. Inspección de valores atípicos</h3>
+      <p>La variable <b>Amount</b>, a pesar de haber sido normalizada, presenta una distribución que puede ser visualizada mediante un boxplot. Esta representación evidencia la presencia de observaciones extremas. Si bien estas observaciones no deben ser eliminadas sin una justificación, su análisis es fundamental para asegurar la estabilidad del modelo frente a ruido o fraude intencionalmente atípico.</p>
+      <div class="why-block"><span class="why-label">¿Por qué?</span>
+        <svg class="why-bulb" viewBox="0 0 32 32"><ellipse cx="16" cy="14" rx="10" ry="10" fill="#ffe066" stroke="#bfa800" stroke-width="2"/><rect x="13" y="22" width="6" height="6" rx="2" fill="#bfa800"/><rect x="14.5" y="28" width="3" height="2" rx="1" fill="#ffe066"/></svg>
+        <span class="why-explanation">Los valores atípicos pueden afectar la robustez del modelo y, en el caso de fraude, pueden ser precisamente los casos más interesantes de analizar.</span>
+      </div>
+    </div>
+    <div class="card step-card">
+      <h3>C. Segmento representativo del dataset</h3>
+      <p>Se presenta una muestra aleatoria del dataset procesado, la cual permite verificar visualmente la integridad y formato de las variables codificadas, derivadas y normalizadas.</p>
+      <div class="table-scroll" id="complementary-sample"></div>
+      <div class="why-block"><span class="why-label">¿Por qué?</span>
+        <svg class="why-bulb" viewBox="0 0 32 32"><ellipse cx="16" cy="14" rx="10" ry="10" fill="#ffe066" stroke="#bfa800" stroke-width="2"/><rect x="13" y="22" width="6" height="6" rx="2" fill="#bfa800"/><rect x="14.5" y="28" width="3" height="2" rx="1" fill="#ffe066"/></svg>
+        <span class="why-explanation">Una muestra aleatoria permite comprobar que el preprocesamiento se realizó correctamente y que los datos están listos para modelado.</span>
+      </div>
+    </div>
+  </section>
+
+<script defer>
+// Mostrar muestra aleatoria en tareas complementarias
+function showComplementarySample(data) {
+  if (!data.length) return;
+  const columns = Object.keys(data[0]);
+  let html = '<table border="1" cellpadding="5" cellspacing="0"><thead><tr>' + columns.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+  // Muestra aleatoria de 5 filas
+  const sample = [...data].sort(() => Math.random() - 0.5).slice(0, 5);
+  sample.forEach(row => {
+    html += '<tr>' + columns.map(c => `<td>${row[c] !== undefined ? row[c] : ''}</td>`).join('') + '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('complementary-sample').innerHTML = html;
+}
+// Llamar a showComplementarySample al final del procesamiento
+const oldShowPreview = window.showPreview;
+window.showPreview = function(data) {
+  oldShowPreview(data);
+  showComplementarySample(data);
+}
+</script>
+</body>
+</html> 
